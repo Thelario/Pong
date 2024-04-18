@@ -37,6 +37,8 @@ void Ball::Update(float delta_time)
 	{
 		direction.x *= -1;
 		speed++;
+		left_paddle->SetAnimate(true);
+		assets_manager->PlaySound("ball-sound");
 	}
 
 	// Calculamos si la bola choca contra el paddle de la derecha
@@ -46,6 +48,8 @@ void Ball::Update(float delta_time)
 	{
 		direction.x *= -1;
 		speed++;
+		right_paddle->SetAnimate(true);
+		assets_manager->PlaySound("ball-sound");
 	}
 
 	// Calculamos si la bola choca contra los límites de derecha e izquierda
@@ -66,6 +70,7 @@ void Ball::Update(float delta_time)
 	if ((new_position.y - height / 2 <= 0) || (new_position.y + height / 2 >= 600)) {
 		direction.y *= -1;
 		speed++;
+		assets_manager->PlaySound("ball-sound");
 	}
 
 	position += delta_time * speed * direction;

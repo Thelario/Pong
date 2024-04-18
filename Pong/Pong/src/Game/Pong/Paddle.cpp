@@ -1,18 +1,28 @@
 #include "Paddle.h"
 
 #include "../../Engine/InputManager.h"
+#include <iostream>
 
 const std::string paddle_asset_id = "fancy-paddle";
 const int paddle_width = 32;
 const int paddle_height = 128;
 const int paddle_speed = 120;
+const float animation_speed = 1.75f;
 
 void Paddle::Start()
 {
 	direction = 0;
+	animating = false;
+	animation_direction = 1;
 }
 
 void Paddle::Update(float delta_time)
+{
+	MovePaddle(delta_time);
+	AnimatePaddle(delta_time);
+}
+
+void Paddle::MovePaddle(float delta_time)
 {
 	direction = 0;
 
@@ -44,6 +54,24 @@ void Paddle::Update(float delta_time)
 	position.y = new_position_y;
 }
 
+void Paddle::AnimatePaddle(float delta_time)
+{
+	if (animating == false) {
+		return;
+	}
+
+	current_scale += animation_speed * delta_time * glm::vec2(animation_direction);
+	if (current_scale.x >= max_scale.x && current_scale.y >= max_scale.y) {
+		animation_direction = -1;
+	}
+
+	if (current_scale.x <= default_scale.x && current_scale.y <= default_scale.y) {
+		animation_direction = 1;
+		current_scale = default_scale;
+		animating = false;
+	}
+}
+
 void Paddle::Render(SDL_Renderer* renderer)
 {
 	if (assets_manager == nullptr) {
@@ -54,11 +82,14 @@ void Paddle::Render(SDL_Renderer* renderer)
 
 	SDL_Rect src = texture->GetSourceRect();
 
+	float real_width = paddle_width * current_scale.x;
+	float real_height = paddle_height * current_scale.y;
+
 	SDL_Rect dest = {
-		static_cast<int>(position.x - (paddle_width / 2)),
-		static_cast<int>(position.y - (paddle_height / 2)),
-		static_cast<int>(paddle_width),
-		static_cast<int>(paddle_height)
+		static_cast<int>(position.x - (real_width / 2)),
+		static_cast<int>(position.y - (real_height / 2)),
+		static_cast<int>(real_width),
+		static_cast<int>(real_height)
 	};
 
 	SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
@@ -76,4 +107,8 @@ int Paddle::GetWidth() const {
 
 int Paddle::GetHeight() const {
 	return paddle_height;
+}
+
+void Paddle::SetAnimate(bool animate) {
+	animating = animate;
 }

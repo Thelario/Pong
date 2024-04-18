@@ -65,24 +65,54 @@ bool AssetsManager::LoadAssets()
 	AddFont("arial-font", "./assets/fonts/arial.ttf", 100);
 	AddFont("charriot-font", "./assets/fonts/charriot.ttf", 100);
 
+	// Initialize SDL_mixer
+
+	if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) != 0)
+	{
+		std::cout << "SDL_mixer could not initialize! SDL_mixer Error: " << Mix_GetError() << std::endl;
+		return false;
+	}
+
+	// Loading music & sounds
+	
+	music = Mix_LoadMUS("./assets/sounds/music.wav");
+	if (music == NULL) {
+		std::cout << "Failed to load music! SDL_mixer Error: " << Mix_GetError() << std::endl;
+		return false;
+	}
+
+	Mix_Chunk* ball_sound = Mix_LoadWAV("./assets/sounds/ball.wav");
+	if (ball_sound == NULL) {
+		std::cout << "Failed to load ball sound! SDL_mixer Error: " << Mix_GetError() << std::endl;
+		return false;
+	}
+
+	sounds.emplace("ball-sound", ball_sound);
+
 	return true;
 }
 
 void AssetsManager::ClearAssets()
 {
-	for (auto texture : textures)
-	{
+	for (auto texture : textures) {
 		delete texture.second;
 	}
 
 	textures.clear();
 
-	for (auto font : fonts)
-	{
+	for (auto font : fonts) {
 		TTF_CloseFont(font.second);
 	}
 
 	fonts.clear();
+	
+	for (auto sound : sounds) {
+		Mix_FreeChunk(sound.second);
+	}
+
+	sounds.clear();
+
+	Mix_FreeMusic(music);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -153,4 +183,22 @@ TTF_Font* AssetsManager::GetFont(const std::string& asset_id) const
 	}
 
 	return fonts.at(asset_id);
+}
+
+void AssetsManager::PlayMusic()
+{
+	return;
+	Mix_PlayMusic(music, -1);
+}
+
+void AssetsManager::PlaySound(const std::string& sound_id)
+{
+	return;
+	if (sounds.find(sound_id) == sounds.end()) 
+	{
+		std::cout << "ERROR - Trying to play a sound with a wrong sound_id: " << sound_id << std::endl;
+		return;
+	}
+
+	Mix_PlayChannel(-1, sounds.at(sound_id), 0);
 }

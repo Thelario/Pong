@@ -5,6 +5,7 @@
 #include <chrono>
 
 #include "../Engine/InputManager.h"
+#include <SDL_image.h>
 
 const char* title = "Pong";
 const int width = 800;
@@ -29,6 +30,8 @@ void Game::Setup()
         is_running = false;
         return;
     }
+
+    Mix_Init(MIX_INIT_WAVPACK);
 
 	// Creating SDL Window
 
@@ -196,4 +199,7 @@ void Game::Destroy()
 
 	SDL_DestroyRenderer(renderer);
 	SDL_DestroyWindow(window);
+    Mix_Quit();
+    TTF_Quit();
+    SDL_Quit();
 }

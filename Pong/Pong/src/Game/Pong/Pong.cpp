@@ -30,14 +30,15 @@ void Pong::Start()
 	left_paddle_text = new Text(glm::vec2(350, 50), glm::vec2(0.5), "0", "arial-font", assets_manager, { 255, 255, 255, 255 });
 	right_paddle_text = new Text(glm::vec2(450, 50), glm::vec2(0.5), "0", "arial-font", assets_manager, { 255, 255, 255, 255 });
 
-	left_paddle = new Paddle(glm::vec2(48, 300), true, assets_manager);
-	right_paddle = new Paddle(glm::vec2(752, 300), false, assets_manager);
+	left_paddle = new Paddle(glm::vec2(48, 300), glm::vec2(1), true, assets_manager);
+	right_paddle = new Paddle(glm::vec2(752, 300), glm::vec2(1), false, assets_manager);
 
 	ball = new Ball(glm::vec2(400, 300), 32, 32, 200, assets_manager, random, left_paddle, right_paddle, this);
 
 	left_paddle->Start();
 	right_paddle->Start();
 	ball->Start();
+	assets_manager->PlayMusic();
 }
 
 void Pong::Update(float delta_time)
