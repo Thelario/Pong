@@ -187,15 +187,11 @@ TTF_Font* AssetsManager::GetFont(const std::string& asset_id) const
 
 void AssetsManager::PlayMusic()
 {
-	//return;// TODO: SDL_Mixer not working for some reason.
-
 	Mix_PlayMusic(music, -1);
 }
 
 void AssetsManager::PlaySound(const std::string& sound_id)
 {
-	//return; // TODO: SDL_Mixer not working for some reason.
-
 	if (sounds.find(sound_id) == sounds.end()) 
 	{
 		std::cout << "ERROR - Trying to play a sound with a wrong sound_id: " << sound_id << std::endl;
